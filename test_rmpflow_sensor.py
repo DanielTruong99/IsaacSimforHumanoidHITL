@@ -21,12 +21,12 @@ from isaacsim.core.utils.extensions import enable_extension
 from isaacsim.core.utils.stage import get_stage_units
 
 # enable ROS bridge extension
-enable_extension("omni.isaac.ros_bridge")
+# enable_extension("isaacsim.ros2.bridge")
 
 simulation_app.update()
 my_world = World(stage_units_in_meters=1.0, physics_dt=1/60)
 
-import rospy
+import rclpy
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float32MultiArray
 
@@ -125,10 +125,11 @@ def PickPlace(_point_num):
     return _target_position
 
 
-rospy.init_node('joint_states_listener', anonymous=True)
-# rospy.Subscriber("/joint_cmd", JointState, joint_states_callback)
-rospy.Subscriber("/sensor_data", Float32MultiArray, sensor_data_callback)
-pub_joint = rospy.Publisher("/joint_states", Float32MultiArray, queue_size=10)
+# rlcpy.init()
+# node = rclpy.create_node("joint_state_publisher")
+# # rospy.Subscriber("/joint_cmd", JointState, joint_states_callback)
+# rospy.Subscriber("/sensor_data", Float32MultiArray, sensor_data_callback)
+# pub_joint = rospy.Publisher("/joint_states", Float32MultiArray, queue_size=10)
 
 # Task Settings
 my_world = World(stage_units_in_meters=1.0, physics_dt=1/60)
@@ -201,9 +202,9 @@ while simulation_app.is_running():
             point_num += 1
             if point_num > 6:
                 point_num = 0
-        joint_msgs  = Float32MultiArray()
-        joint_msgs.data = actions.joint_positions.tolist()
-        pub_joint.publish(joint_msgs)
+        # joint_msgs  = Float32MultiArray()
+        # joint_msgs.data = actions.joint_positions.tolist()
+        # pub_joint.publish(joint_msgs)
         
 
 simulation_app.close()

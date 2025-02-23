@@ -21,8 +21,9 @@ from omni.isaac.core.utils.extensions import enable_extension
 from omni.isaac.dynamic_control import _dynamic_control
 from isaacsim.sensors.physics import IMUSensor
 from isaacsim.core.utils.numpy.rotations import quats_to_rot_matrices, euler_angles_to_quats
+from isaacsim.core.prims import Articulation
 
-my_world = World(stage_units_in_meters=1.0)
+my_world = World(stage_units_in_meters=1.0, physics_dt = 0.005, rendering_dt = 0.002)
 my_world.scene.add_default_ground_plane()
 
 # enable ROS bridge extension
@@ -36,8 +37,8 @@ from std_msgs.msg import Float32MultiArray
 ACTION_DIM = 10
 # joint_cmd = np.array([0, 0, -0.2, 0.25, 0, 0, 0, -0.2, 0.25, 0])
 joint_cmd = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-kps = np.array([10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000])
-kds = np.array([10, 10, 10, 10, 10, 10, 10, 10, 10, 10])
+kps = np.array([1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000])
+kds = np.array([5, 5, 5, 5, 5, 5, 5, 5, 5, 5])
 def joint_cmd_callback(msg):
     # For general, the velocity field is used as pds gains
     global joint_cmd, kps, kds, ACTION_DIM
@@ -62,11 +63,15 @@ humanoid: Robot = my_world.scene.add(Robot(prim_path="/World/Humanoid", name="my
 humanoid.set_world_pose(position=np.array([0.0, 0.0, 0.91]) / get_stage_units()
                         , orientation=euler_angles_to_quats(np.array([0, 0, 0])))
 
+humanoid_articulation = Articulation(prim_paths_expr="/World/Humanoid/base")
+humanoid_articulation.set_joint_positions(np.array([0.0, 0.0, 0.0, 0.0, -0.2, -0.2, 0.25, 0.25, 0.0, 0.0]))
+humanoid_articulation.set_friction_coefficients()
+
 imu_sensor: IMUSensor = my_world.scene.add(
     IMUSensor(
         prim_path="/World/Humanoid/base/imu_sensor",
         name="imu",
-        frequency=100,
+        # frequency=100,
         translation=np.array([0, 0, 0]),
     )
 )
@@ -104,19 +109,19 @@ while simulation_app.is_running():
 
         current_time = node.get_clock().now().to_msg()
 
-        if state == 0:
-            joint_cmd = joint_init
-            cnt0 += 1
-            if cnt0 > 100:
-                state = 1
-                cnt0 = 0
-        elif state == 1:
-            cnt1 += 1
-            alpha = cnt1/200
-            cnt1 = cnt1 if cnt1 < 200 else 200
-            joint_cmd = joint_init*(1-alpha) + joint_kneel*alpha
-            if cnt1 == 200:
-                state = 2
+        # if state == 0:
+        #     joint_cmd = joint_init
+        #     cnt0 += 1
+        #     if cnt0 > 100:
+        #         state = 1
+        #         cnt0 = 0
+        # elif state == 1:
+        #     cnt1 += 1
+        #     alpha = cnt1/200
+        #     cnt1 = cnt1 if cnt1 < 200 else 200
+        #     joint_cmd = joint_init*(1-alpha) + joint_kneel*alpha
+        #     if cnt1 == 200:
+        #         state = 2
 
 
         # Set PD gains
