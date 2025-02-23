@@ -1,0 +1,14 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "setup_python_env",
+            "type": "shell",
+            "linux": {
+                "command": "export CARB_APP_PATH=${workspaceFolder}/_isaac_sim/kit && export ISAAC_PATH=_isaac_sim && export EXP_PATH=${workspaceFolder}/_isaac_sim/apps && source ${workspaceFolder}/_isaac_sim/setup_python_env.sh && printenv >${workspaceFolder}/_isaac_sim/.vscode/.standalone_examples.env"
+            }
+        }
+    ]
+}
