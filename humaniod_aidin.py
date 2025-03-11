@@ -64,8 +64,8 @@ humanoid.set_world_pose(position=np.array([0.0, 0.0, 0.91]) / get_stage_units()
                         , orientation=euler_angles_to_quats(np.array([0, 0, 0])))
 
 humanoid_articulation = Articulation(prim_paths_expr="/World/Humanoid/base")
-humanoid_articulation.set_joint_positions(np.array([0.0, 0.0, 0.0, 0.0, -0.2, -0.2, 0.25, 0.25, 0.0, 0.0]))
-humanoid_articulation.set_friction_coefficients()
+# humanoid_articulation.set_joint_positions(np.array([0.0, 0.0, 0.0, 0.0, -0.2, -0.2, 0.25, 0.25, 0.0, 0.0]))
+# humanoid_articulation.set_friction_coefficients(np.array([0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]))
 
 imu_sensor: IMUSensor = my_world.scene.add(
     IMUSensor(
