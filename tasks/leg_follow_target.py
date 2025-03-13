@@ -103,6 +103,8 @@ class LegFollowTarget(FollowTarget):
         """
         joints_state = self._robot.get_joints_state()
         target_position, target_orientation = self._target.get_local_pose()
+        robot_position, robot_orientation = self._robot.get_local_pose()
+        target_position = target_position - robot_position
 
         return {
             self._robot.name: {
